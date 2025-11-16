@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVT 1103 - Test Equipment Exam</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0a1a35;
+            --secondary: #1e3a5f;
+            --accent: #4cc9f0;
+            --highlight: #f72585;
+            --text: #e6f1ff;
+            --correct: #4ade80;
+            --incorrect: #f87171;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, #162b4d 100%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+            animation: fadeIn 1s ease-out;
+        }
+        
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--accent), var(--highlight));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(76, 201, 240, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+        
+        .creator {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-bottom: 20px;
+        }
+        
+        .screen {
+            width: 100%;
+            background: rgba(30, 58, 95, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(76, 201, 240, 0.2);
+            display: none;
+            animation: slideUp 0.5s ease-out;
+        }
+        
+        #start-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .start-btn {
+            background: linear-gradient(135deg, var(--accent), var(--highlight));
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 30px;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(76, 201, 240, 0.4);
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(76, 201, 240, 0.6);
+        }
+        
+        .question-counter {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+        
+        .question {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .option {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(76, 201, 240, 0.3);
+            border-radius: 10px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1.1rem;
+        }
+        
+        .option:hover {
+            background: rgba(76, 201, 240, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .option.correct {
+            background: rgba(74, 222, 128, 0.3);
+            border-color: var(--correct);
+            animation: pulse 0.5s;
+        }
+        
+        .option.incorrect {
+            background: rgba(248, 113, 113, 0.3);
+            border-color: var(--incorrect);
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .feedback.correct {
+            background: rgba(74, 222, 128, 0.2);
+            border: 1px solid var(--correct);
+        }
+        
+        .feedback.incorrect {
+            background: rgba(248, 113, 113, 0.2);
+            border: 1px solid var(--incorrect);
+        }
+        
+        .score-display {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5rem;
+            margin: 30px 0;
+            background: linear-gradient(90deg, var(--accent), var(--highlight));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: pulse 2s infinite;
+        }
+        
+        .score-text {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .restart-btn {
+            background: linear-gradient(135deg, var(--accent), var(--highlight));
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(76, 201, 240, 0.4);
+        }
+        
+        .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(76, 201, 240, 0.6);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--highlight));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+            top: -10px;
+            opacity: 0;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .screen {
+                padding: 20px;
+            }
+            
+            .question {
+                font-size: 1.2rem;
+            }
+            
+            .option {
+                padding: 12px 15px;
+                font-size: 1rem;
+            }
+            
+            .score-display {
+                font-size: 4rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+            
+            .option {
+                padding: 10px 12px;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AAET 1-B Reviewer</h1>
+            <p class="subtitle">AVT 1103 Reviewer</p>
+            <p class="subtitle">Test Equipment & NDT Methods Exam</p>
+            <p class="creator">Created by: Paul Andrei C. Timpog</p>
+        </header>
+        
+        <div id="start-screen" class="screen">
+            <h2>Welcome, Avionics Technician!</h2>
+            <p>Test your knowledge of Non-Destructive Testing (NDT) methods, calibration procedures, and test equipment.</p>
+            <p>Disclaimer: This is not the actual test and please be informed that this is just a MOCK EXAM. This is created by a student and there are chances that the correctness of the mock exam is inaccurate. </p>
+            <p>You'll face 50 challenging questions. Choose wisely!</p>
+            <button id="start-btn" class="start-btn">BEGIN EXAM</button>
+        </div>
+        
+        <div id="quiz-screen" class="screen">
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <div class="question-counter" id="question-counter">Question 1 of 50</div>
+            <div class="question" id="question"></div>
+            <div class="options" id="options"></div>
+            <div class="feedback" id="feedback"></div>
+        </div>
+        
+        <div id="results-screen" class="screen">
+            <h2>Exam Complete!</h2>
+            <div class="score-display" id="final-score">0%</div>
+            <div class="score-text" id="score-text"></div>
+            <button id="restart-btn" class="restart-btn">TRY AGAIN</button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz questions data - 50 questions from AVT 1103
+        const quizData = [
+            {
+                question: "Non-destructive testing (NDT) is used to evaluate the properties of a material without causing damage.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 0
+            },
+            {
+                question: "Calibration is only necessary for new test equipment, not for equipment already in use.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 1
+            },
+            {
+                question: "Liquid Penetrant Testing can be used to detect internal flaws in a thick aluminum casting.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 1
+            },
+            {
+                question: "The International System of Units (SI) forms the top level of the calibration traceability pyramid.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 0
+            },
+            {
+                question: "Eddy Current testing is an effective NDT method for inspecting non-conductive materials like plastics.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 1
+            },
+            {
+                question: "A calibration certificate is not necessary if the instrument is only used for non-critical measurements.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 1
+            },
+            {
+                question: "Ultrasonic Testing (UT) uses high-frequency sound waves to detect subsurface defects.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 0
+            },
+            {
+                question: "The primary purpose of calibration is to repair a broken measuring instrument.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 1
+            },
+            {
+                question: "Visual Inspection is considered one of the oldest and simplest forms of NDT.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 0
+            },
+            {
+                question: "Metrological traceability requires an unbroken, documented chain of calibrations back to a recognized standard.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 0
+            },
+            {
+                question: "Magnetic Particle Testing is suitable for inspecting both ferromagnetic and non-ferromagnetic materials.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 1
+            },
+            {
+                question: "Calibration by comparison involves checking a device against a standard with a known, higher accuracy.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 0
+            },
+            {
+                question: "Radiography (X-ray) requires access to only one side of the component being inspected.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 1
+            },
+            {
+                question: "ISO/IEC 17025 is the international standard for calibration laboratory accreditation.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 0
+            },
+            {
+                question: "Acoustic Emission Testing involves listening for stress waves released by a material under load.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 0
+            },
+            {
+                question: "The nominal value is the exact, real-world measurement of an object with no variation.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 1
+            },
+            {
+                question: "A 'tap test' is a type of Acoustic Emission Test.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 0
+            },
+            {
+                question: "All calibration laboratories follow the exact same format for their calibration certificates.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 1
+            },
+            {
+                question: "Phased Array Ultrasonic Testing is an advanced method that provides 2D and 3D views of flaws.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 0
+            },
+            {
+                question: "The main goal of leak testing in aircraft is to ensure cabin pressurization and prevent fluid leaks.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 0
+            },
+            {
+                question: "Calibration uncertainty refers to the exact, known error of a measurement.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 1
+            },
+            {
+                question: "Dye Penetrant Inspection can be used on porous surfaces like wood.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 1
+            },
+            {
+                question: "A National Metrology Institute (NMI) is responsible for maintaining the highest-level measurement standards in a country.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 0
+            },
+            {
+                question: "Vibration Analysis is used to monitor the health of rotating machinery like aircraft engines.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 0
+            },
+            {
+                question: "The tolerance value defines the acceptable range of variation from a nominal value.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 0
+            },
+            {
+                question: "Thermal/Infrared testing detects flaws by mapping anomalies in surface heat flow.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 0
+            },
+            {
+                question: "Calibration should only be performed when an instrument is visibly damaged.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 1
+            },
+            {
+                question: "Radiography leaves residual radiation on the inspected parts after the test is complete.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 1
+            },
+            {
+                question: "A reference standard is a device with a known, verified accuracy used to calibrate other instruments.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 0
+            },
+            {
+                question: "The application of a developer is a key step in the Liquid Penetrant Testing process.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 0
+            },
+            {
+                question: "The more critical a measurement is, the less frequently the equipment should be calibrated.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 1
+            },
+            {
+                question: "Laser Testing methods, like shearography, are useful for detecting very small surface deformations.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 0
+            },
+            {
+                question: "'Accuracy' and 'Tolerance' have the exact same meaning in metrology.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 1
+            },
+            {
+                question: "Flow calibration ensures that flow meters provide accurate and consistent readings.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 0
+            },
+            {
+                question: "The final step in Liquid Penetrant Testing is always the application of the penetrant liquid.",
+                options: [
+                    "TRUE",
+                    "FALSE"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which of the following is a sub-surface NDT method that uses electromagnetic induction to detect flaws in conductive materials?",
+                options: [
+                    "Liquid Penetrant Testing",
+                    "Ultrasonic Testing",
+                    "Eddy Current Testing",
+                    "Visual Inspection"
+                ],
+                correct: 2
+            },
+            {
+                question: "What is the primary purpose of calibration?",
+                options: [
+                    "To increase the resale value of an instrument.",
+                    "To ensure a measuring instrument provides accurate and reliable results.",
+                    "To clean and repair damaged test equipment.",
+                    "To certify an instrument for a new type of measurement."
+                ],
+                correct: 1
+            },
+            {
+                question: "Which NDT method involves applying a penetrant liquid, removing the excess, and then using a developer to draw out the penetrant from surface flaws?",
+                options: [
+                    "Radiographic Testing",
+                    "Magnetic Particle Testing",
+                    "Acoustic Emission Testing",
+                    "Liquid Penetrant Testing"
+                ],
+                correct: 3
+            },
+            {
+                question: "The concept where a measurement result can be related to a national or international standard through a documented chain of calibrations is called:",
+                options: [
+                    "Calibration Accreditation",
+                    "Metrological Traceability",
+                    "Tolerance Verification",
+                    "Uncertainty Analysis"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which organization is typically at the top of the calibration traceability pyramid within a country?",
+                options: [
+                    "Primary Calibration Lab",
+                    "National Metrology Institute (NMI)",
+                    "International Bureau of Weights and Measures (BIPM)",
+                    "Secondary Calibration Lab"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which type of calibrator is used to provide a stable and known reference temperature for devices like thermocouples and RTDs?",
+                options: [
+                    "Pressure Calibrator",
+                    "Humidity Generator",
+                    "Temperature Calibrator",
+                    "Electrical Calibrator"
+                ],
+                correct: 2
+            },
+            {
+                question: "If a part has a specified dimension of 100 mm with a tolerance of ±0.5 mm, which of the following actual measurements is acceptable?",
+                options: [
+                    "99.4 mm",
+                    "100.6 mm",
+                    "99.5 mm",
+                    "100.5 mm"
+                ],
+                correct: 2
+            },
+            {
+                question: "Why is NDT critically important in the aerospace industry?",
+                options: [
+                    "It is the fastest way to test materials.",
+                    "It is the least expensive testing method.",
+                    "It ensures airworthiness and safety without destroying high-value components.",
+                    "It is only used during the manufacturing stage."
+                ],
+                correct: 2
+            },
+            {
+                question: "What does the international standard ISO/IEC 17025 provide for a calibration laboratory?",
+                options: [
+                    "A list of calibrated instruments for sale.",
+                    "Accreditation, confirming its technical competence and quality management.",
+                    "A warranty for all instruments it calibrates.",
+                    "The specific tolerance values for all measurements."
+                ],
+                correct: 1
+            },
+            {
+                question: "Which NDT method is ideal for detecting cracks in bolt holes by using a rotating scanner?",
+                options: [
+                    "Visual Inspection",
+                    "Radiography",
+                    "Eddy Current Testing",
+                    "Thermal Testing"
+                ],
+                correct: 2
+            },
+            {
+                question: "The allowable limit or range of variation from a specified value that is considered acceptable is known as:",
+                options: [
+                    "Uncertainty",
+                    "Accuracy",
+                    "Tolerance",
+                    "Nominal Value"
+                ],
+                correct: 2
+            },
+            {
+                question: "Which of the following is a key advantage of Liquid Penetrant Testing?",
+                options: [
+                    "It can inspect deeply buried internal flaws.",
+                    "It is a portable and inexpensive method for testing large areas.",
+                    "It requires no surface preparation.",
+                    "It can be used on dirty and rough surfaces."
+                ],
+                correct: 1
+            },
+            {
+                question: "When is a calibration most likely to be performed outside of its regular schedule?",
+                options: [
+                    "When the instrument is new.",
+                    "When the instrument is stored properly.",
+                    "After the instrument has been accidentally dropped or damaged.",
+                    "When the calibration certificate is about to expire."
+                ],
+                correct: 2
+            },
+            {
+                question: "What is the main function of a 'developer' in the Liquid Penetrant process?",
+                options: [
+                    "To clean the surface before inspection.",
+                    "To remove excess penetrant from the surface.",
+                    "To draw the penetrant out of surface flaws to make them visible.",
+                    "To provide a protective coating after inspection."
+                ],
+                correct: 2
+            },
+            {
+                question: "Which calibration discipline involves verifying instruments that measure parameters like voltage, current, and resistance?",
+                options: [
+                    "Pressure Calibration",
+                    "Flow Calibration",
+                    "Electrical Calibration",
+                    "Temperature Calibration"
+                ],
+                correct: 2
+            }
+        ];
+
+        // DOM elements
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const feedbackElement = document.getElementById('feedback');
+        const questionCounterElement = document.getElementById('question-counter');
+        const progressElement = document.getElementById('progress');
+        const finalScoreElement = document.getElementById('final-score');
+        const scoreTextElement = document.getElementById('score-text');
+
+        // Game state
+        let currentQuestion = 0;
+        let score = 0;
+        let totalQuestions = quizData.length;
+
+        // Audio elements
+        const correctSound = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==');
+        const incorrectSound = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==');
+        
+        // Initialize the game
+        function init() {
+            startBtn.addEventListener('click', startGame);
+            restartBtn.addEventListener('click', restartGame);
+            
+            // Update question counter to show actual total
+            questionCounterElement.textContent = `Question 1 of ${totalQuestions}`;
+        }
+
+        // Start the game
+        function startGame() {
+            startScreen.style.display = 'none';
+            quizScreen.style.display = 'block';
+            currentQuestion = 0;
+            score = 0;
+            showQuestion();
+        }
+
+        // Show current question
+        function showQuestion() {
+            resetState();
+            if (currentQuestion >= totalQuestions) {
+                showResults();
+                return;
+            }
+            
+            const question = quizData[currentQuestion];
+            questionCounterElement.textContent = `Question ${currentQuestion + 1} of ${totalQuestions}`;
+            questionElement.textContent = question.question;
+            progressElement.style.width = `${((currentQuestion) / totalQuestions) * 100}%`;
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('div');
+                button.classList.add('option');
+                button.textContent = option;
+                button.addEventListener('click', () => selectOption(index));
+                optionsElement.appendChild(button);
+            });
+        }
+
+        // Reset question state
+        function resetState() {
+            feedbackElement.style.display = 'none';
+            feedbackElement.className = 'feedback';
+            while (optionsElement.firstChild) {
+                optionsElement.removeChild(optionsElement.firstChild);
+            }
+        }
+
+        // Handle option selection
+        function selectOption(index) {
+            const question = quizData[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            
+            // Disable all options after selection
+            options.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            if (index === question.correct) {
+                // Correct answer
+                options[index].classList.add('correct');
+                feedbackElement.textContent = "Correct! Well done.";
+                feedbackElement.classList.add('correct');
+                feedbackElement.style.display = 'block';
+                score++;
+                
+                // Play correct sound
+                correctSound.play();
+                
+                // Create confetti effect for correct answer
+                createConfetti();
+            } else {
+                // Incorrect answer
+                options[index].classList.add('incorrect');
+                options[question.correct].classList.add('correct');
+                feedbackElement.textContent = `Incorrect. The correct answer is: ${question.options[question.correct]}`;
+                feedbackElement.classList.add('incorrect');
+                feedbackElement.style.display = 'block';
+                
+                // Play incorrect sound
+                incorrectSound.play();
+            }
+            
+            // Move to next question after a delay
+            setTimeout(() => {
+                currentQuestion++;
+                showQuestion();
+            }, 2000);
+        }
+
+        // Show final results
+        function showResults() {
+            quizScreen.style.display = 'none';
+            resultsScreen.style.display = 'block';
+            
+            const percentage = Math.round((score / totalQuestions) * 100);
+            finalScoreElement.textContent = `${percentage}%`;
+            
+            // Set score message based on performance
+            let message = "";
+            if (percentage >= 90) {
+                message = "Outstanding! You're an NDT expert!";
+                createConfetti(50);
+            } else if (percentage >= 70) {
+                message = "Great job! You have solid knowledge of test equipment and NDT methods.";
+                createConfetti(30);
+            } else if (percentage >= 50) {
+                message = "Good effort! Keep studying to improve your knowledge.";
+            } else {
+                message = "Keep practicing! Review the material and try again.";
+            }
+            
+            scoreTextElement.textContent = `You scored ${score} out of ${totalQuestions}. ${message}`;
+            progressElement.style.width = '100%';
+        }
+
+        // Restart the game
+        function restartGame() {
+            resultsScreen.style.display = 'none';
+            startScreen.style.display = 'flex';
+        }
+
+        // Create confetti effect
+        function createConfetti(count = 20) {
+            for (let i = 0; i < count; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                // Random position
+                const left = Math.random() * 100;
+                confetti.style.left = `${left}vw`;
+                
+                // Random color
+                const colors = ['#4cc9f0', '#f72585', '#7209b7', '#3a0ca3', '#4361ee'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.backgroundColor = color;
+                
+                // Random size
+                const size = Math.random() * 10 + 5;
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                
+                // Random animation
+                const duration = Math.random() * 3 + 2;
+                const delay = Math.random() * 0.5;
+                confetti.style.animation = `confetti ${duration}s ease-out ${delay}s forwards`;
+                
+                document.body.appendChild(confetti);
+                
+                // Remove confetti after animation completes
+                setTimeout(() => {
+                    confetti.remove();
+                }, (duration + delay) * 1000);
+            }
+        }
+
+        // Initialize the game when the page loads
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
